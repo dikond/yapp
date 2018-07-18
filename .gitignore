@@ -1,0 +1,9 @@
+# Ignore system and temp files
+.DS_Store
+/tmp
+.tmp
+.log
+
+# Ignore local configs
+.env
+*.local
