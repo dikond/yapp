@@ -1,9 +1,12 @@
-# Ignore system and temp files
+# System and temp files
 .DS_Store
 /tmp
 .tmp
 .log
 
-# Ignore local configs
+# Local configs
 .env
 *.local
+
+# Autogenerate documentation
+/doc

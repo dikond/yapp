@@ -12,6 +12,7 @@ gem 'rake'
 gem 'roda'
 gem 'sequel'
 gem 'sequel_pg'
+gem 'interactor'
 
 gem 'batteries', require: false
 
@@ -21,10 +22,12 @@ group :development do
 end
 
 group :test do
+  gem 'rack-test'
   gem 'rspec'
 end
 
 group :development, :test do
   gem 'dotenv'
   gem 'pry-byebug'
+  gem 'rspec_api_documentation'
 end
