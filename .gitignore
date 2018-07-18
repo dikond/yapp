@@ -10,3 +10,6 @@
 
 # Autogenerate documentation
 /doc
+
+# RSpec artifacts
+/spec/examples.txt
