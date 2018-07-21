@@ -2,7 +2,7 @@ require 'auth'
 require 'models/user'
 
 RSpec.describe Auth, type: :unit do
-  let(:instance) { Auth.new(secret: 'windmill') }
+  let(:instance) { described_class.new(secret: 'windmill') }
   let(:user) { instance_double('user', id: 1) }
 
   describe '#encode' do
@@ -33,5 +33,22 @@ RSpec.describe Auth, type: :unit do
     end
   end
 
-  describe '#find_user_by_token'
+  describe '#find_user_by_token' do
+    subject { instance.find_user_by_token(token) }
+
+    context 'with valid token' do
+      let(:token) { instance.encode(user) }
+      let(:user) { User.create(agent: 'mozilla') }
+
+      it 'returns user instance' do
+        is_expected.to eq user
+      end
+    end
+
+    context 'with invalid token' do
+      let(:token) { '12345' }
+
+      it { is_expected.to be nil }
+    end
+  end
 end
