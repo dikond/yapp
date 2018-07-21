@@ -13,6 +13,7 @@ gem 'roda'
 gem 'sequel'
 gem 'sequel_pg'
 gem 'interactor'
+gem 'jwt'
 
 gem 'batteries', require: false
 

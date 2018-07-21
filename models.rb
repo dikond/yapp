@@ -9,7 +9,7 @@ Sequel::Model.plugin :auto_validations
 Sequel::Model.plugin :prepared_statements
 Sequel::Model.plugin :subclasses unless ENV['RACK_ENV'] == 'development'
 
-Dir['./models/*.rb'].each { |file| require file }
+Dir['./lib/models/*.rb'].each { |file| require file }
 
 if ENV['RACK_ENV'] == 'development'
   require 'logger'

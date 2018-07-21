@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'roda'
+require 'auth'
 
 class Yapp < Roda
   # ----------------------------------------------------------
@@ -52,10 +53,10 @@ class Yapp < Roda
     auth = request.headers['Authorization']
     return if auth.nil?
 
-    matched = auth.match(/\AToken token="(.+)"\z/)
+    matched = auth.match(/\ABearer (.+)\z/)
     return if matched.nil?
 
-    @user = { name: 'DK' } if matched[1] == 'kek'
+    @user = Auth.find_user_by_token(matched[1])
   end
 
   def render_not_authorized(request)

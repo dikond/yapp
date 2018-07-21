@@ -18,6 +18,7 @@ GEM
     i18n (1.0.1)
       concurrent-ruby (~> 1.0)
     interactor (3.1.1)
+    jwt (2.1.0)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -80,6 +81,7 @@ DEPENDENCIES
   batteries
   dotenv
   interactor
+  jwt
   pry-byebug
   rack
   rack-test
