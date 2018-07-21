@@ -19,7 +19,7 @@ class Auth
 
   def find_user_by_token(token)
     payload, _ = decode!(token)
-    User.find(payload['id'])
+    User[payload['id']]
   rescue JWT::DecodeError
   end
 end

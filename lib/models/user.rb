@@ -1,5 +1,3 @@
-class User < Struct.new(:id)
-  def find(*)
-    raise NotImplementedError
-  end
+class User < Sequel::Model(:users)
+  many_to_many :analyses, join_table: :users_analyses
 end
