@@ -13,7 +13,6 @@ gem 'jwt'
 gem 'sequel'
 gem 'sequel_pg'
 gem 'sequel_postgresql_triggers'
-gem 'interactor'
 
 group :development do
   gem 'rerun'

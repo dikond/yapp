@@ -10,6 +10,7 @@ class Yapp < Roda
 
   plugin :halt
   plugin :request_headers
+  plugin :json
   plugin :default_headers,
     'Content-Type'=>'application/json',
     'X-Frame-Options'=>'deny',
@@ -30,11 +31,11 @@ class Yapp < Roda
         end
 
         r.is 'analyses' do
-          render_not_authorized(r) unless authenticate_user(r)
+          authenticate_user(r)
 
           # show all analyses scoped by user
           r.get do
-            response.write @user.to_json
+            @user.analyses
           end
 
           # send the files for analysis
@@ -51,15 +52,15 @@ class Yapp < Roda
 
   def authenticate_user(request)
     auth = request.headers['Authorization']
-    return if auth.nil?
+    render_not_authorized(request) if auth.nil?
 
     matched = auth.match(/\ABearer (.+)\z/)
-    return if matched.nil?
+    render_not_authorized(request) if matched.nil?
 
-    @user = Auth.find_user_by_token(matched[1])
+    (@user = Auth.new.find_user_by_token(matched[1])) || render_not_authorized(request)
   end
 
   def render_not_authorized(request)
-    request.halt 401, { 'WWW-Authenticate' => 'Token' }, '"Unauthorized"'
+    request.halt 401, { 'WWW-Authenticate' => 'Bearer' }, '"Unauthorized"'
   end
 end
