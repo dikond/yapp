@@ -15,6 +15,9 @@ gem 'sequel_pg'
 gem 'sequel_postgresql_triggers'
 gem 'dry-monads'
 gem 'dry-validation'
+gem 'concurrent-ruby-edge'
+gem 'shrine'
+gem 'shrine-sql'
 
 group :development do
   gem 'rerun'

@@ -9,11 +9,9 @@ module Operations
     end
 
     def call(params)
-      validation = params_validation.call(params)
-      return Failure(validation.errors) if validation.failure?
+      output = yield validate(params)
 
-      user = User.create(validation.output[:user])
-      Success(user)
+      Success(User.create(output[:user]))
     end
   end
 end

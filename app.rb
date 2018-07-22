@@ -10,7 +10,7 @@ class Yapp < Roda
 
   plugin :halt
   plugin :request_headers
-  plugin :json
+  plugin :json, classes: [Array, Hash, String, Sequel::Model]
   plugin :default_headers,
     'Content-Type'=>'application/json',
     'X-Frame-Options'=>'deny',
@@ -27,10 +27,8 @@ class Yapp < Roda
         r.is 'registration' do
           r.post do
             run(Operations::Register) do |result|
-              token = Auth.new.encode(result.value!).to_json
-
               response.status = 201
-              response.write(token)
+              Auth.new.encode(result.value!)
             end
           end
         end
@@ -45,7 +43,10 @@ class Yapp < Roda
 
           # send the files for analysis
           r.post do
-            # run(Operations::Analyze)
+            run(Operations::Analyze, user: @user) do |result|
+              response.status = 200
+              result.value!
+            end
           end
         end
       end
@@ -67,12 +68,12 @@ class Yapp < Roda
   end
 
   def render_not_authorized
-    request.halt 401, { 'WWW-Authenticate' => 'Bearer' }, '"Unauthorized"'
+    request.halt 401, { 'WWW-Authenticate' => 'Bearer' }, 'Unauthorized'
   end
 
   def run(operation, **args)
     params = request.params.transform_keys(&:to_sym)
-    result = operation.new.call(params, **args)
+    result = operation.new.call(params.merge(args))
 
     if result.failure?
       response.status = 422

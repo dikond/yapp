@@ -4,7 +4,10 @@ require 'dry/validation'
 
 class Operation
   include Dry::Monads::Result::Mixin
-  include Dry::Monads::Do.for(:call)
+
+  def self.inherited(subclass)
+    subclass.include Dry::Monads::Do.for(:call)
+  end
 
   def call
     raise NotImplementedError
@@ -19,7 +22,16 @@ class Operation
     @_params_validation = Dry::Validation.Params(&block)
   end
 
+  # ----------------------------------------------------------
+  # Helpers
+  # ----------------------------------------------------------
+
   def params_validation
     self.class.params_validation
+  end
+
+  def validate(params)
+    validation = params_validation.call(params)
+    validation.failure? ? Failure(validation.errors) : Success(validation.output)
   end
 end
