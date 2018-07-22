@@ -25,13 +25,18 @@ class Yapp < Roda
     r.on 'api' do
       r.on 'v1' do
         r.is 'registration' do
-          # generate uuid and store client metrics
           r.post do
+            run(Operations::Register) do |result|
+              token = Auth.new.encode(result.value!).to_json
+
+              response.status = 201
+              response.write(token)
+            end
           end
         end
 
         r.is 'analyses' do
-          authenticate_user(r)
+          authenticate_user
 
           # show all analyses scoped by user
           r.get do
@@ -40,6 +45,7 @@ class Yapp < Roda
 
           # send the files for analysis
           r.post do
+            # run(Operations::Analyze)
           end
         end
       end
@@ -50,17 +56,29 @@ class Yapp < Roda
   # Helpers
   # ----------------------------------------------------------
 
-  def authenticate_user(request)
+  def authenticate_user
     auth = request.headers['Authorization']
-    render_not_authorized(request) if auth.nil?
+    render_not_authorized if auth.nil?
 
     matched = auth.match(/\ABearer (.+)\z/)
-    render_not_authorized(request) if matched.nil?
+    render_not_authorized if matched.nil?
 
-    (@user = Auth.new.find_user_by_token(matched[1])) || render_not_authorized(request)
+    (@user = Auth.new.find_user_by_token(matched[1])) || render_not_authorized
   end
 
-  def render_not_authorized(request)
+  def render_not_authorized
     request.halt 401, { 'WWW-Authenticate' => 'Bearer' }, '"Unauthorized"'
+  end
+
+  def run(operation, **args)
+    params = request.params.transform_keys(&:to_sym)
+    result = operation.new.call(params, **args)
+
+    if result.failure?
+      response.status = 422
+      result.failure
+    else
+      yield result
+    end
   end
 end

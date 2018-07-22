@@ -13,6 +13,8 @@ gem 'jwt'
 gem 'sequel'
 gem 'sequel_pg'
 gem 'sequel_postgresql_triggers'
+gem 'dry-monads'
+gem 'dry-validation'
 
 group :development do
   gem 'rerun'
