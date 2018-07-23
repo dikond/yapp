@@ -3,8 +3,8 @@ class Analysis < Sequel::Model(:analyses)
   one_to_many :file_analyses
 
   class << self
-    def find_previous(checksum:, url:)
-      where(checksum: checksum, url: url).first
+    def find_previous(url:, checksum:)
+      where(url: url, checksum: checksum).first
     end
   end
 end

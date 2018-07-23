@@ -39,7 +39,6 @@ You'll find documentation under `/docs/api/index.html`
 
 # TODO
 
-* Add DB indexes (url, checksum) on analysis
 * Setup websockets for notifications
 * Setup HTTP caching (Lost-Modified, Etag etc)
 * Setup webapp server for production (puma ?)
