@@ -23,13 +23,17 @@ module Operations
       checksum       = yield calc_checksum(prepared_files)
 
       prev_analysis  = find_analysis(output, checksum)
-      return Success(prev_analysis) unless prev_analysis.nil?
+      unless prev_analysis.nil?
+        update_history(output[:user], prev_analysis)
+        return Success(prev_analysis)
+      end
 
       analysis = yield create_analysis(output, checksum)
       files    = yield create_files(analysis, prepared_files)
       results  = yield analyze_files(files)
 
-      update_status_and_history(analysis, results, output)
+      update_status(analysis, results)
+      update_history(output[:user], analysis)
       Success(analysis)
     end
 
@@ -63,6 +67,10 @@ module Operations
       Analysis.find_previous(checksum: checksum, url: output[:url])
     end
 
+    def update_history(user, analysis)
+      user.add_analysis(analysis)
+    end
+
     def create_analysis(output, checksum)
       record = Analysis.create(status: 'pending', url: output[:url], checksum: checksum)
       Success(record)
@@ -84,7 +92,7 @@ module Operations
       Success(results)
     end
 
-    def update_status_and_history(analysis, results, output)
+    def update_status(analysis, results)
       all_stats = Set.new
 
       results.each do |result|
@@ -95,9 +103,6 @@ module Operations
 
       all_safe = all_stats.to_a == %w[safe]
       analysis.update(status: all_safe ? 'safe' : 'unsafe')
-
-      user = output[:user]
-      user.add_analysis(analysis)
     end
   end
 end

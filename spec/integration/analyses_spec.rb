@@ -85,6 +85,11 @@ RSpec.resource 'Api / V1 / Analyses', type: :integration do
         parsed_status = JSON.parse(response_body).fetch('status')
         expect(parsed_status).to eq 'undefined'
       end
+
+      it 'tracks analysis request' do
+        expect { do_auth_request(token: token) }.to change { user.reload.analyses.size }.by(1)
+        expect(status).to eq 200
+      end
     end
   end
 end
